@@ -4,7 +4,7 @@ import numpy as np
 
 data = keras.datasets.imdb
 
-(train_data , train_labels) , (test_data , test_labels) = data.load_data(num_words=10000)
+(train_data , train_labels) , (test_data , test_labels) = data.load_data(num_words=88000)
 
 print("--------------------------datas-----------------------------------")
 print(" ")
@@ -35,26 +35,41 @@ test_data = keras.preprocessing.sequence.pad_sequences( test_data , value=word_i
 def decode_review(text): 
     return " ".join([reverse_word_index.get(i , "?") for i in text])
 
-print(decode_review(test_data[0]))
-print(len(test_data) , len(train_data))
+# print(decode_review(test_data[0]))
+# print(len(test_data) , len(train_data))
 
-model = keras.Sequential()
+# model = keras.Sequential()
 
-model.add(keras.layers.Embedding(10000 , 16))
-model.add(keras.layers.GlobalAveragePooling1D())
-model.add(keras.layers.Dense(16  , activation="relu"))
-model.add(keras.layers.Dense(1 , activation="sigmoid"))
-
-
-model.summary()
-
-model.compile(optimizer="adam" loss="binary_crossentropy" , metrics=["accuracy"])
-
-x_val = train_data[:10000]
-x_train = train_data[10000:]
+# model.add(keras.layers.Embedding(88000 , 16))
+# model.add(keras.layers.GlobalAveragePooling1D())
+# model.add(keras.layers.Dense(16  , activation="relu"))
+# model.add(keras.layers.Dense(1 , activation="sigmoid"))
 
 
-y_val = train_labels[:10000]
-y_train = train_labels[10000:]
+# model.summary()
 
-fitModel = model.fit(x_train , y_train , epochs=40 , batch_size=512 , validation_data=)
+# model.compile(optimizer="adam" ,loss="binary_crossentropy" , metrics=["accuracy"])
+
+# x_val = train_data[:10000]
+# x_train = train_data[10000:]
+
+
+# y_val = train_labels[:10000]
+# y_train = train_labels[10000:]
+
+# fitModel = model.fit(x_train , y_train , epochs=40 , batch_size=512 , validation_data=(x_val , y_val) ,verbose=1)
+
+# result = model.evaluate(test_data , test_labels )
+
+# print(result)
+
+model = keras.models.load_model("model.h5")
+test_review = test_data[0]
+predict = model.predict([test_review])
+print("Review : ")
+print(decode_review(test_review))
+x = np.argmax(predict[0])
+print("Prediction : " + str(x))
+print("Actual : " + str(test_labels[0]))
+
+model.save("model.h5")
